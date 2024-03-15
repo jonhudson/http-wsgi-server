@@ -20,9 +20,32 @@ while True:
 
     message: HttpMessage = parse_message(con_socket)
 
+    server_name, server_port = None, None
+    for k, v in message.headers.items():
+        if k.lower() == 'host':
+            server_name, server_port = v.split(':')
+            break
+
+    content_type = None
+    for k, v in message.headers.items():
+        if k.lower() == 'content-type':
+            content_type = v
+            break
+
+    content_length = None
+    for k, v in message.headers.items():
+        if k.lower() == 'content-length':
+            content_length = v
+            break
+    
     environ = {
         'REQUEST_METHOD': message.method,
         'PATH_INFO': message.uri,
+        'SERVER_PROTOCOL': message.protocol,
+        'SERVER_NAME': server_name,
+        'SERVER_PORT': server_port,
+        'CONTENT_TYPE': content_type,
+        'CONTENT_LENGTH': content_length,
         'wsgi.input': message.body,
         'wsgi.errors': get_error_handler(),
         'wsgi.run_once': False,
@@ -30,7 +53,7 @@ while True:
         'wsgi.multithread': False,
         'wsgi.version': (1, 0),
         'wsgi.url_scheme': b'http'.decode('iso-8859-1')
-    }
+    } | message.headers
 
     http_resp = HttpResponse(con_socket)
 

@@ -1,23 +1,6 @@
 import re
 from typing import Sequence
 
-class HttpHeader():
-
-    def __init__(self, name: str, value: str):
-        self.name = name
-        self.value = value
-
-class HttpHeaderCollection():
-
-    def __init__(self, headers: list[HttpHeader]):
-        self.headers = headers
-
-    def __len__(self):
-        return len(self.headers)
-
-    def __getitem__(self, pos):
-        return self.headers[pos]
-
 class HttpMessageBody():
     def __init__(self, body: str):
         self.body = body
@@ -68,7 +51,8 @@ class HttpMessage():
         self, 
         uri: bytes, 
         method: bytes, 
-        headers: HttpHeaderCollection, 
+        protocol: bytes,
+        headers: dict[str, str], 
         body: bytes):
 
         if method not in self.http_methods:
@@ -76,6 +60,7 @@ class HttpMessage():
 
         self.uri = uri.decode('iso-8859-1')
         self.method = method.decode('iso-8859-1')
+        self.protocol = protocol.decode('iso-8859-1')
         self.headers = headers
         self.body = HttpMessageBody(body.decode('iso-8859-1'))
 
@@ -164,13 +149,12 @@ def parse_message(con_socket):
 
     headers_matches = re.findall(headers_pattern, message_header, re.I)
 
-    header_collection = HttpHeaderCollection([ 
-        HttpHeader(
-                name.strip().decode('iso-8859-1'), value.strip().decode('iso-8859-1')) 
+    header_dict = { 
+                name.strip().decode('iso-8859-1'): value.strip().decode('iso-8859-1')
                 for name, value in headers_matches 
-            ])
+            }
 
     # Create and return HttpMessage
-    message = HttpMessage(request_uri, method, header_collection, message_body)
+    message = HttpMessage(request_uri, method, protocol, header_dict, message_body)
 
     return message

@@ -12,12 +12,12 @@ class HttpResponse():
         self.socket_handle.send(data)
 
     def start_response(self, status: bytes | str, 
-                       headers: list[tuple[bytes | str, bytes | str]]) -> None:
+                        headers: list[tuple[bytes | str, bytes | str]]) -> None:
 
         if type(status) is bytes:
             status = status.decode('iso-8859-1')
 
-        self.write_to_stream(status + '\r\n')
+        self.write_to_stream('HTTP/1.1 ' + status + '\r\n')
 
         for name, value in headers:
             if type(name) is bytes:
