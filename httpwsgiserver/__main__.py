@@ -1,18 +1,19 @@
-#!/usr/bin/env python3
-
 import socket
 import sys
-from httpmessage import parse_message, HttpMessage, get_error_handler
-from httpresponse import HttpResponse
+from httpwsgiserver.http.message import (parse_message, HttpMessage, 
+        get_error_handler)
+from httpwsgiserver.http.response import HttpResponse
 from importlib import import_module
 
-wsgi_module_name, wsgi_app_name = sys.argv[1].split(':')
+wsgi_module_name, wsgi_app_name = sys.argv[2].split(':')
 wsgi_module =  import_module(wsgi_module_name)
 wsgi_app = getattr(wsgi_module, wsgi_app_name)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-s.bind(('127.0.0.1', 9000))
+host, port = sys.argv[1].split(':')
+
+s.bind((host, int(port)))
 s.listen()
 
 while True:

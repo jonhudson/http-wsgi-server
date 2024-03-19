@@ -2,10 +2,10 @@ import re
 from typing import Sequence
 
 class HttpMessageBody():
-    def __init__(self, body: str):
+    def __init__(self, body: bytes) -> None:
         self.body = body
 
-    def read(size: int):
+    def read(self, size: int) -> bytes:
         if len(self.body) == 0:
             raise IndexError('Already at end of message body')
 
@@ -14,7 +14,7 @@ class HttpMessageBody():
 
         return chars
 
-    def readline():
+    def readline(self) -> bytes:
         if len(self.body) == 0:
             raise IndexError('Already at end of message body')
 
@@ -24,7 +24,7 @@ class HttpMessageBody():
         
         return line
 
-    def readlines(hint = None):
+    def readlines(self, hint = None):
         if len(self.body) == 0:
             raise IndexError('Already at end of message body')
 
@@ -36,7 +36,7 @@ class HttpMessageBody():
     def __iter__(self):
         return self
 
-    def __next__():
+    def __next__(self):
         try:
             return self.readline()
         except IndexError:
@@ -62,7 +62,7 @@ class HttpMessage():
         self.method = method.decode('iso-8859-1')
         self.protocol = protocol.decode('iso-8859-1')
         self.headers = headers
-        self.body = HttpMessageBody(body.decode('iso-8859-1'))
+        self.body = HttpMessageBody(body)
 
 class ErrorHandler():
     def flush(self) -> None:
