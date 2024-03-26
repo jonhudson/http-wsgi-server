@@ -64,6 +64,9 @@ class HttpMessage():
             raise Exception('Invalid HTTP method')
 
         self.uri = uri.decode('iso-8859-1')
+
+        self.uri_path, self.uri_query_string = self.uri.split('?')
+
         self.method = method.decode('iso-8859-1')
         self.protocol = protocol.decode('iso-8859-1')
         self.headers = headers

@@ -42,7 +42,8 @@ class Worker():
         
         environ = {
             'REQUEST_METHOD': message.method,
-            'PATH_INFO': message.uri,
+            'PATH_INFO': message.uri_path,
+            'QUERY_STRING': message.uri_query_string,
             'SERVER_PROTOCOL': message.protocol,
             'SERVER_NAME': server_name,
             'SERVER_PORT': server_port,
@@ -52,7 +53,7 @@ class Worker():
             'wsgi.errors': get_error_handler(),
             'wsgi.run_once': False,
             'wsgi.multiprocess': False,
-            'wsgi.multithread': False,
+            'wsgi.multithread': True,
             'wsgi.version': (1, 0),
             'wsgi.url_scheme': b'http'.decode('iso-8859-1')
         } | message.headers
