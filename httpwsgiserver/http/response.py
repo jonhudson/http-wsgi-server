@@ -1,4 +1,5 @@
 import socket
+from httpwsgiserver.http.types import ResponseStatus, ResponseHeaders
 
 class HttpResponse():
     def __init__(self, socket_handle: socket):
@@ -11,8 +12,8 @@ class HttpResponse():
 
         self.socket_handle.send(data)
 
-    def start_response(self, status: bytes | str, 
-                        headers: list[tuple[bytes | str, bytes | str]]) -> None:
+    def start_response(self, status: ResponseStatus, 
+                        headers: ResponseHeaders) -> None:
 
         if type(status) is bytes:
             status = status.decode('iso-8859-1')
