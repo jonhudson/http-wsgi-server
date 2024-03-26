@@ -6,12 +6,15 @@ from httpwsgiserver.http.response import HttpResponse
 from httpwsgiserver.http.types import ResponseStatus, ResponseHeaders
 
 WsgiEnvironDict = dict
-WsgiCallable = (
-        Callable[[WsgiEnvironDict, Callable[ResponseStatus, ResponseHeaders]], Iterator]
-    )
+WsgiCallable = Callable[
+            [
+                WsgiEnvironDict, 
+                Callable[[ResponseStatus, ResponseHeaders], Callable[[bytes | str], None]]
+            ], Iterator
+        ]
 
 class Worker():
-    def __init__(self, con_socket: socket, 
+    def __init__(self, con_socket: socket.socket, 
                  wsgi_app: WsgiCallable) -> None:
 
         self.wsgi_app = wsgi_app

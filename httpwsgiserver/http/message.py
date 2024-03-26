@@ -1,4 +1,5 @@
 import re
+import sys
 from typing import Sequence
 
 class HttpMessageBody():
@@ -19,10 +20,14 @@ class HttpMessageBody():
             raise IndexError('Already at end of message body')
 
         ma = re.match(b'.*(\r\n|\r|\n)', self.body)
-        line = ma.group(0)
-        self.body = self.body[ma.end() + 1:]
-        
-        return line
+
+        if ma is not None:
+            line = ma.group(0)
+            self.body = self.body[ma.end() + 1:]
+
+            return line
+
+        return b''
 
     def readlines(self, hint = None):
         if len(self.body) == 0:
@@ -68,10 +73,10 @@ class ErrorHandler():
     def flush(self) -> None:
         pass
 
-    def write(msg: str) -> None:
+    def write(self, msg: str) -> None:
         sys.stderr.write(msg)
 
-    def writelines(seq: Sequence[str]) -> None:
+    def writelines(self, seq: Sequence[str]) -> None:
         for msg in seq:
             sys.stderr.write(msg)
 
