@@ -15,7 +15,7 @@ WsgiCallable = Callable[
 
 class Worker():
     def __init__(self, con_socket: socket.socket, 
-                 wsgi_app: WsgiCallable) -> None:
+                 wsgi_app: WsgiCallable, logger) -> None:
 
         self.wsgi_app = wsgi_app
         self.con_socket = con_socket
@@ -57,6 +57,8 @@ class Worker():
             'wsgi.version': (1, 0),
             'wsgi.url_scheme': b'http'.decode('iso-8859-1')
         } | message.headers
+
+        logger.debug(environ)
 
         http_resp = HttpResponse(self.con_socket)
 
