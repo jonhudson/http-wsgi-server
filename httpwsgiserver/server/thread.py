@@ -58,6 +58,8 @@ class Worker():
             'wsgi.url_scheme': b'http'.decode('iso-8859-1')
         } | message.headers
 
+        print(environ)
+
         http_resp = HttpResponse(self.con_socket)
 
         for data in self.wsgi_app(environ, http_resp.start_response):
