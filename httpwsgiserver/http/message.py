@@ -65,7 +65,11 @@ class HttpMessage():
 
         self.uri = uri.decode('iso-8859-1')
 
-        self.uri_path, self.uri_query_string = self.uri.split('?')
+        if self.uri.find('?') != -1:
+            self.uri_path, self.uri_query_string = self.uri.split('?')
+        else:
+            self.uri_path = self.uri
+            self.uri_query_string = None
 
         self.method = method.decode('iso-8859-1')
         self.protocol = protocol.decode('iso-8859-1')
