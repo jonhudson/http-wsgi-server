@@ -150,21 +150,19 @@ def parse_message(con_socket):
 
     message_header = message_header[next_pos:]
 
-    # Extract the http headers
-    headers_pattern = (b'(Accept|Accept-Charset|Accept-Encoding|Accept-Language|'
-                          b'Authorization|Expect|From|Host|If-Match|If-Modified-Since|'
-                          b'If-None-Match|If-Range|If-Unmodified-Since|'
-                          b'Max-Forwards|Proxy-Authorization|Range|Referer|TE|'
-                          b'User-Agent|Allow|Content-Encoding|Content-Language|'
-                          b'Content-Length|Content-Location|Content-MD5|Content-Range|'
-                          b'Content-Type|Expires|Last-Modified):([^\r\n]+)')
+    # Extract the http headers.
+    #
+    # Split the header section on CRLF line endings that are 
+    # not preceded by a tab or space. This is because header values
+    # can span multiple lines as long as the \r\n is preceded by a tab or space
+    header_lines = re.split(b'(?<! |\t)\r\n', message_header)
 
-    headers_matches = re.findall(headers_pattern, message_header, re.I)
-
-    header_dict = { 
-                name.strip().decode('iso-8859-1'): value.strip().decode('iso-8859-1')
-                for name, value in headers_matches 
-            }
+    header_dict = {}
+    for line in header_lines:
+        if line.strip() == b'':
+            continue
+        name, value = line.split(b':', 1)
+        header_dict[name.strip().decode('iso-8859-1')] = value.strip().decode('iso-8859-1')
 
     # Create and return HttpMessage
     message = HttpMessage(request_uri, method, protocol, header_dict, message_body)
